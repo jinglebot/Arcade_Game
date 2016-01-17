@@ -109,3 +109,11 @@
         isReady: isReady
     };
 })();
+
+function getRandomInt (min, max) {
+    if (!min && !max) {
+        min = 100;
+        max = 500;
+    }
+    return Math.round(Math.random() * (max - min)) + min;
+}

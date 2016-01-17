@@ -1,4 +1,5 @@
 // Enemies our player must avoid
+var c = 0;
 var Enemy = function() {
     // Variables applied to each of our instances go here,
     // we've provided one for you to get started
@@ -8,20 +9,11 @@ var Enemy = function() {
     this.sprite = 'images/enemy-bug.png';
     this.x = -100;
     this.y = 65;
-    // Max speed to me is 15, too fast if any higher
-    this.speed = (function () {
-        var min, max;
-        return function (min, max) {
-            if (!min && !max) {
-                min = 1;
-                max = 15;
-            }
-            return Math.round(Math.random() * (max - min)) + min;
-        };
-    }());
 
-    // check values:
-    // console.log(this.speed());
+    // To set speed range
+    this.min = 100;
+    this.max = 500;
+    this.speed = getRandomInt(this.min, this.max);
 };
 
 // Update the enemy's position, required method for game
@@ -31,9 +23,8 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     this.x++;
-    this.x += this.speed();
-    // TODO: How do you use dt?
-    // this.x *= dt * 100;
+    this.x += this.speed * dt;
+    // console.log(this.y + ' ' + this.speed);
 
     // if the bug reaches the side of the screen,
     // it starts again with a different speed
@@ -41,7 +32,7 @@ Enemy.prototype.update = function(dt) {
     // out of the screen before restarting
     if (this.x > (ctx.canvas.width + Resources.get(this.sprite).width)) {
         this.x = -100;
-        this.speed();
+        this.speed = getRandomInt(this.min, this.max);
     }
 };
 
@@ -57,14 +48,23 @@ var Player = function() {
     this.sprite = 'images/char-boy.png';
     this.x = 200;
     this.y = 400;
+
+    // For increments of movement
+    this.incrX = 0;
+    this.incrY = 0;
 };
 
-Player.prototype.update = function() {
-    // Make sure the hero stays within the screen
+Player.prototype.update = function(dt) {
+    // To make sure our hero stays within the screen
     this.x < -15 && (this.x = -15);
     this.x > (ctx.canvas.width - 90) && (this.x = ctx.canvas.width - 90);
     this.y < -10 && (this.y = -10);
     this.y > (ctx.canvas.height - 175) && (this.y = ctx.canvas.height - 175);
+
+    // So that our hero run smoothly
+    // TODO: How do you make him pause?
+    this.x += this.incrX * 100 * dt;
+    this.y += this.incrY * 100 * dt;
 };
 
 Player.prototype.render = function() {
@@ -72,10 +72,10 @@ Player.prototype.render = function() {
 };
 
 Player.prototype.handleInput = function(punchedKey) {
-    if (punchedKey == 'left') { return this.x-= 40};
-    if (punchedKey == 'up') { return this.y-= 10};
-    if (punchedKey == 'right') { return this.x+= 40};
-    if (punchedKey == 'down') { return this.y+= 40};
+    if (punchedKey == 'left') { return this.incrX = -1; }
+    if (punchedKey == 'up') { return this.incrY = -1; }
+    if (punchedKey == 'right') { return this.incrX = 1; }
+    if (punchedKey == 'down') { return this.incrY = 1; }
 };
 
 // Now instantiate your objects.

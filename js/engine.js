@@ -57,6 +57,13 @@ var Engine = (function(global) {
          * function again as soon as the browser is able to draw another frame.
          */
         win.requestAnimationFrame(main);
+
+        // If the hero reaches the water
+        if (player.y < 0) {
+            ctx.fillStyle = "red";
+            ctx.font = 'italic bold 36px Arial, sans-serif';
+            ctx.fillText('Level Complete', ctx.canvas.width * 0.5 - 130, 100, 300);
+        }
     }
 
     /* This function does some initial setup that should only occur once,
@@ -83,15 +90,23 @@ var Engine = (function(global) {
         checkCollisions();
     }
 
-    // TODO: not working
     function checkCollisions() {
         allEnemies.forEach(function(enemy) {
-            if ((Math.abs(enemy.x - player.x) < 100) && (Math.abs(enemy.y - player.y) < 50)) {
-                stop();
+            // check left of player, right of player, top of player, bottom of player
+            // check each bug, left of bug, right of bug, top of bug, bottom of bug
+            // if player space falls anywhere within enemy space, reset
+            if (    // if the right side of the player touches the left side of the enemy
+                    ((player.x + (Resources.get(player.sprite).width * 3 / 4)) > enemy.x) &&
+                    // if the left side of the player touches the right side of the enemy
+                    ((player.x + (Resources.get(player.sprite).width / 4)) < (enemy.x + Resources.get(enemy.sprite).width)) &&
+                    // if the feet of the player touches the top of the enemy
+                    ((player.y + (Resources.get(player.sprite).height * 4 / 5)) > (enemy.y + (Resources.get(enemy.sprite).height * 2 / 5))) &&
+                    // if the head of the player touches the legs of the enemy
+                    ((player.y + (Resources.get(player.sprite).height * 2 / 5)) < (enemy.y + (Resources.get(enemy.sprite).height * 4 / 5))) ) {
+                        reset();
             }
         });
     }
-
 
     /* This is called by the update function and loops through all of the
      * objects within your allEnemies array as defined in app.js and calls
@@ -104,7 +119,7 @@ var Engine = (function(global) {
         allEnemies.forEach(function(enemy) {
             enemy.update(dt);
         });
-        player.update();
+        player.update(dt);
     }
 
     /* This function initially draws the "game level", it will then call
@@ -170,6 +185,8 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
+        player.x = 200;
+        player.y = 400;
     }
 
     /* Go ahead and load all of the images we know we're going to need to
