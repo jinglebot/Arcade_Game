@@ -10,7 +10,7 @@ The enemy bugs appear at random. To move our hero, use the following keys:
 	- press arrow left to go left, and
 	- press arrow right to go right.
 
-To start the game, visit my gh-pages at http://jinglebot.github.io/frontend-nanodegree-arcade-game.
+To start the game, visit my gh-pages at http://jinglebot.github.io/Arcade_Game.
 
 
 
